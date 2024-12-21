@@ -1,0 +1,329 @@
+﻿@{
+    ViewData["Title"] = "Anasayfa";
+}
+
+<!-- CSS -->
+<style>
+    body {
+        background: #f7f7f7; /* Arka plan rengini değiştirdim */
+        font-family: 'Arial', sans-serif;
+        color: #333;
+    }
+
+    .navbar {
+        background-color: #2b5876;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 15px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: white;
+        transition: background-color 0.3s ease-in-out;
+    }
+
+        .navbar img {
+            height: 60px;
+            transition: transform 0.3s ease-in-out;
+        }
+
+            .navbar img:hover {
+                transform: scale(1.1);
+            }
+
+        .navbar h1 {
+            font-size: 1.8rem;
+            margin: 0;
+            padding-left: 15px;
+            color: #ffffff;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3);
+        }
+
+    .btn-primary {
+        background-color: #ff7e5f; /* Buton için kırmızımsı ton */
+        border: none;
+        color: white;
+        font-size: 1.1rem;
+        padding: 10px 20px;
+        border-radius: 5px;
+        transition: background-color 0.3s, box-shadow 0.3s;
+    }
+
+        .btn-primary:hover {
+            background-color: #feb47b; /* Hoverda sarı ton */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+    .dropdown-menu {
+        display: none;
+        background-color: #ffffff;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        margin-top: 10px;
+        padding: 0;
+    }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+    .dropdown-item {
+        padding: 10px 20px;
+        color: #333;
+        font-size: 1rem;
+        background-color: #f8f9fa; /* Hafif gri arka plan */
+        transition: background-color 0.3s ease-in-out;
+    }
+
+        .dropdown-item:hover {
+            background-color: #ff7e5f; /* Hover durumunda kırmızımsı renk */
+            color: white;
+        }
+
+        .dropdown-item.text-danger {
+            color: #dc3545;
+        }
+
+            .dropdown-item.text-danger:hover {
+                background-color: #f8d7da;
+                color: #dc3545;
+            }
+
+    .info-box {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 20px;
+        padding: 20px;
+    }
+
+        .info-box .info-item {
+            text-align: center;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 120px;
+            height: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1rem; /* Küçük yazı boyutu */
+            color: #ffffff;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+            .info-box .info-item:hover {
+                transform: scale(1.1); /* Hover ile büyütme efekti */
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            }
+
+            .info-box .info-item h3 {
+                font-size: 1.4rem; /* Küçük başlık fontu */
+                color: #ffffff;
+                margin: 0;
+            }
+
+            .info-box .info-item p {
+                font-size: 1rem; /* Küçük yazı boyutu */
+                color: #ffffff;
+                margin-top: 10px; /* Sayıların alt tarafa kayması için */
+            }
+
+    /* Renkli kutucuklar için */
+    .info-item.uyeler {
+        background-color: #4CAF50; /* Yeşil */
+    }
+
+    .info-item.egitmenler {
+        background-color: #FF5733; /* Kırmızı */
+    }
+
+    .info-item.alletler {
+        background-color: #FFD700; /* Sarı */
+    }
+
+    .equipment, .trainers {
+        margin-top: 40px;
+        padding: 20px;
+        background-color: rgba(255, 255, 255, 0.8);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border-left: 5px solid #ff7e5f;
+    }
+
+        .equipment h2, .trainers h2 {
+            text-align: center;
+            font-size: 2rem;
+            color: #2b5876;
+            margin-bottom: 20px;
+        }
+
+    /* Eğitmen Kart Stili */
+    .trainer-card {
+        display: flex;
+        align-items: center;
+        margin-bottom: 30px;
+        padding: 15px;
+        background-color: #ffffff;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    }
+
+        .trainer-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .trainer-card img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-right: 20px;
+            border: 3px solid #ff7e5f;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .trainer-card h3 {
+            font-size: 1.8rem;
+            color: #2b5876;
+            margin: 0;
+        }
+
+        .trainer-card p {
+            font-size: 1rem;
+            color: #4a5568;
+        }
+
+        .trainer-card .trainer-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+            /* Eğitim alanı başlık */
+            .trainer-card .trainer-details p {
+                margin: 5px 0;
+            }
+</style>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="d-flex align-items-center">
+        <img src="/images/logo.png" alt="Logo">
+        <h1>Fitrack Yönetim Sistemi</h1>
+    </div>
+    <div class="dropdown">
+        <button class="btn btn-primary" type="button" id="dropdownMenuButton">
+            İşlem Menüsü
+        </button>
+        <ul class="dropdown-menu" id="dropdownMenu">
+            <li><a class="dropdown-item" href="@Url.Action("uye_yonetimi", "Uye")">Üye Yönetimi</a></li>
+            <li><a class="dropdown-item" href="/Ders/Islemler">Ders İşlemleri</a></li>
+            <li><a class="dropdown-item" href="/Egitmen/Yonetim">Eğitmen Yönetimi</a></li>
+            <li><a class="dropdown-item" href="/Alet/Yonetim">Alet Yönetimi</a></li>
+            <li><a class="dropdown-item" href="/GelirGider/Yonetim">Gelir-Gider Yönetimi</a></li>
+            <li><a class="dropdown-item" href="/Raporlama/Goruntule">Raporlama</a></li>
+            <li><a class="dropdown-item text-danger" href="/Admin/Logout">Çıkış Yap</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Ana İçerik -->
+<div class="container">
+    <!-- Bilgilendirme Kutucukları -->
+    <div class="info-box">
+        <div class="info-item uyeler">
+            <h3>Üye Sayısı</h3>
+            <p>1200</p>
+        </div>
+        <div class="info-item egitmenler">
+            <h3>Eğitmen Sayısı</h3>
+            <p><br>5</p>
+        </div>
+        <div class="info-item alletler">
+            <h3>Alet Sayısı</h3>
+            <p>50</p>
+        </div>
+    </div>
+
+    <div class="equipment">
+        <h2>Salonumuzda Bulunan Aletler</h2>
+        <ul>
+            <li>Kardiyo Makinaları</li>
+            <li>Ağırsikletler</li>
+            <li>Dumbell ve Serbest Aletler</li>
+            <li>Yoga ve Pilates Ekipmanları</li>
+            <li>Esneklik Aletleri</li>
+        </ul>
+    </div>
+
+    <div class="trainers">
+        <h2>Eğitmenlerimiz</h2>
+        <!-- Eğitmen 1 -->
+        <div class="trainer-card">
+            <img src="~/images/eğitmen2.jpg" alt="Eğitmen 1">
+            <div class="trainer-details">
+                <h3>Ayşe Yılmaz</h3>
+                <p><strong>Uzmanlık Alanı:</strong> Kadın Fitness</p>
+                <p><strong>Deneyim:</strong> 5 Yıl</p>
+                <p><strong>Özellikler:</strong> Motivasyon, Kişisel Antrenman Planları</p>
+            </div>
+        </div>
+
+        <!-- Eğitmen 2 -->
+        <div class="trainer-card">
+            <img src="/images/eğitmen4.jpg" alt="Eğitmen 2">
+            <div class="trainer-details">
+                <h3>Göktuğ Alaf</h3>
+                <p><strong>Uzmanlık Alanı:</strong> Ağırsiklet</p>
+                <p><strong>Deneyim:</strong> 8 Yıl</p>
+                <p><strong>Özellikler:</strong> Kas Gelişimi, Fitness Programları</p>
+            </div>
+        </div>
+
+        <!-- Eğitmen 3 -->
+        <div class="trainer-card">
+            <img src="/images/eğitmen1.jpg" alt="Eğitmen 3">
+            <div class="trainer-details">
+                <h3>Elif Demir</h3>
+                <p><strong>Uzmanlık Alanı:</strong> Pilates</p>
+                <p><strong>Deneyim:</strong> 4 Yıl</p>
+                <p><strong>Özellikler:</strong> Esneklik, Postür Düzeltme</p>
+            </div>
+        </div>
+
+        <!-- Eğitmen 4 -->
+        <div class="trainer-card">
+            <img src="/images/eğitmen3.jpg" alt="Eğitmen 4">
+            <div class="trainer-details
+            <div class="trainer-details">
+                <h3>Taylan Özgüç Danyıldız</h3>
+                <p><strong>Uzmanlık Alanı:</strong> Kardiyo</p>
+                <p><strong>Deneyim:</strong> 6 Yıl</p>
+                <p><strong>Özellikler:</strong> Dayanıklılık Antrenmanları</p>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <!-- JavaScript için Dropdown Menü ve Animasyon -->
+    <script>
+        // Dropdown Menüsünü Kontrol Etmek için
+        document.getElementById('dropdownMenuButton').addEventListener('click', function () {
+            var menu = document.getElementById('dropdownMenu');
+            menu.classList.toggle('show');
+        });
+
+        // Sayfa Yüklenirken Dropdown Menü'nün Kapanmasını Sağla
+        window.addEventListener('click', function (event) {
+            if (!event.target.matches('#dropdownMenuButton')) {
+                var dropdowns = document.getElementsByClassName('dropdown-menu');
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        });
+    </script>
+
+
