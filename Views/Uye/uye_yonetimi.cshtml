@@ -1,95 +1,141 @@
 ﻿@model IEnumerable<SporSalonuYönetimSistemi.Models.Member>
-
 @{
     ViewBag.Title = "Üye Yönetimi";
 }
 
-<h2>Üye Yönetimi</h2>
+<h2 class="text-center text-primary mb-4">Üye Yönetimi</h2>
+
+<!-- Başarı/Başarısızlık Mesajları -->
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">@TempData["Message"]</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
 
 <!-- Yeni Üye Ekleme Formu -->
-<h3>Yeni Üye Ekle</h3>
-<form asp-action="UyeEkle_action" method="post">
-    <div class="form-group">
-        <label for="AdSoyad">Ad Soyad</label>
-        <input type="text" class="form-control" id="AdSoyad" name="AdSoyad" required />
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-primary text-white">
+        <h4>Yeni Üye Ekle</h4>
     </div>
-    <div class="form-group">
-        <label for="Eposta">E-posta</label>
-        <input type="email" class="form-control" id="Eposta" name="Eposta" required />
+    <div class="card-body">
+        <form asp-action="uye_yonetimi" method="post" class="form-row">
+            <div class="form-group col-md-6">
+                <label for="AdSoyad">Ad Soyad</label>
+                <input type="text" class="form-control" id="AdSoyad" name="AdSoyad" required />
+            </div>
+            <div class="form-group col-md-6">
+                <label for="Eposta">E-posta</label>
+                <input type="email" class="form-control" id="Eposta" name="Eposta" required />
+            </div>
+            <div class="form-group col-md-6">
+                <label for="Telefon">Telefon</label>
+                <input type="text" class="form-control" id="Telefon" name="Telefon" required />
+            </div>
+            <div class="form-group col-md-6">
+                <label for="UyelikTuru">Üyelik Türü</label>
+                <select class="form-control" id="UyelikTuru" name="UyelikTuru">
+                    <option value="Basic">Basic</option>
+                    <option value="Premium">Premium</option>
+                    <option value="VIP">VIP</option>
+                </select>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="AylikUcret">Aylık Ücret</label>
+                <input type="number" class="form-control" id="AylikUcret" name="AylikUcret" required />
+            </div>
+            <div class="form-group col-md-6">
+                <label for="AbonelikBaslangicTarihi">Abonelik Başlangıç Tarihi</label>
+                <input type="date" class="form-control" id="AbonelikBaslangicTarihi" name="AbonelikBaslangicTarihi" required min="@DateTime.Now.ToString("yyyy-MM-dd")" />
+            </div>
+            <div class="form-group col-md-6">
+                <label for="AbonelikBitisTarihi">Abonelik Bitiş Tarihi</label>
+                <input type="date" class="form-control" id="AbonelikBitisTarihi" name="AbonelikBitisTarihi" required min="@DateTime.Now.ToString("yyyy-MM-dd")" />
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary btn-block">Üye Ekle</button>
+            </div>
+        </form>
     </div>
-    <div class="form-group">
-        <label for="Telefon">Telefon</label>
-        <input type="text" class="form-control" id="Telefon" name="Telefon" required />
-    </div>
-    <div class="form-group">
-        <label for="UyelikTuru">Üyelik Türü</label>
-        <select class="form-control" id="UyelikTuru" name="UyelikTuru">
-            <option value="Basic">Basic</option>
-            <option value="Premium">Premium</option>
-            <option value="VIP">VIP</option>
-        </select>
-    </div>
-    <div class="form-group">
-        <label for="AylikUcret">Aylık Ücret</label>
-        <input type="number" class="form-control" id="AylikUcret" name="AylikUcret" required />
-    </div>
-    <div class="form-group">
-        <label for="AbonelikBaslangicTarihi">Abonelik Başlangıç Tarihi</label>
-        <input type="date" class="form-control" id="AbonelikBaslangicTarihi" name="AbonelikBaslangicTarihi" required />
-    </div>
-    <button type="submit" class="btn btn-primary">Üye Ekle</button>
-</form>
+</div>
 
-<hr />
-
-<!-- Üye Arama Formu -->
-<h3>Üye Arama</h3>
-<form method="get" action="@Url.Action("UyeListesi")">
-    <div class="form-group">
-        <label for="search">Arama Yap:</label>
-        <input type="text" class="form-control" id="search" name="search" placeholder="Üye adı veya e-posta ile arama yapın" />
+<!-- Üye Arama -->
+<h3 class="mt-4">Üye Arama</h3>
+<form method="get" class="mb-4">
+    <div class="input-group">
+        <input type="text" class="form-control" id="search" name="search" value="@ViewBag.SearchTerm" placeholder="Üye adı veya e-posta ile arama yapın" />
+        <div class="input-group-append">
+            <button type="submit" class="btn btn-secondary">Ara</button>
+        </div>
     </div>
-    <button type="submit" class="btn btn-secondary">Ara</button>
 </form>
 
 <hr />
 
 <!-- Üye Listesi -->
-@if (ViewBag.Message != null)
-{
-    <div class="alert alert-warning">@ViewBag.Message</div>
-}
+<div class="card shadow-sm">
+    <div class="card-header bg-info text-white">
+        <h4>Üye Listesi</h4>
+    </div>
+    <div class="card-body">
+        <table class="table table-striped table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Üye Adı</th>
+                    <th>E-posta</th>
+                    <th>Telefon</th>
+                    <th>Kayıt Tarihi</th>
+                    <th>Üyelik Süresi (Ay)</th>
+                    <th>Üyelik Tipi</th>
+                    <th>Aylık Ücret</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var uye in Model)
+                {
+                    <tr>
+                        <td>@uye.AdSoyad</td>
+                        <td>@uye.Eposta</td>
+                        <td>@uye.Telefon</td>
+                        <td>@(uye.AbonelikBaslangicTarihi.HasValue ? uye.AbonelikBaslangicTarihi.Value.ToString("yyyy-MM-dd") : "Tarih yok")</td>
+                        <td>@(uye.UyelikSuresi > 0 ? $"{uye.UyelikSuresi} Ay" : "Tarih yok")</td>
+                        <td>@uye.UyelikTuru</td>
+                        <td>@string.Format("{0:C}", uye.AylikUcret)</td>
+                        <td>
+                            <!-- Düzenle Formu -->
+                            <form asp-action="uye_yonetimi" method="post" style="display:inline;">
+                                <input type="hidden" name="id" value="@uye.Id" />
+                                <input type="hidden" name="actionType" value="update" />
+                                <button type="submit" class="btn btn-warning btn-sm">Düzenle</button>
+                            </form>
 
-<table class="table table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>Üye Adı</th>
-            <th>E-posta</th>
-            <th>Telefon</th>
-            <th>Kayıt Tarihi</th>
-            <th>Üyelik Tipi</th>
-            <th>Aylık Ücret</th>
-            <th>VIP Durumu</th>
-            <th>İşlemler</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var uye in Model)
+                            <!-- Silme Formu -->
+                            <form asp-action="uye_yonetimi" method="post" style="display:inline;">
+                                <input type="hidden" name="id" value="@uye.Id" />
+                                <input type="hidden" name="actionType" value="delete" />
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Emin misiniz?')">Sil</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Sayfalama -->
+<div class="d-flex justify-content-center mt-4">
+    <ul class="pagination">
+        @for (int i = 1; i <= ViewBag.TotalPages; i++)
         {
-            <tr>
-                <td>@uye.AdSoyad</td>
-                <td>@uye.Eposta</td>
-                <td>@uye.Telefon</td>
-                <td>@(uye.AbonelikBaslangicTarihi.HasValue ? uye.AbonelikBaslangicTarihi.Value.ToString("yyyy-MM-dd") : "Tarih yok")</td>
-                <td>@uye.UyelikTuru</td>
-                <td>@string.Format("{0:C}", uye.AylikUcret)</td>
-             
-                <td>
-                    <a class="btn btn-info btn-sm" asp-action="UyeDetay_action" asp-route-id="@uye.Id">Detay</a>
-                    <a class="btn btn-warning btn-sm" asp-action="UyeDuzenle" asp-route-id="@uye.Id">Düzenle</a>
-                    <a class="btn btn-danger btn-sm" asp-action="UyeSil" asp-route-id="@uye.Id" onclick="return confirm('Emin misiniz?')">Sil</a>
-                </td>
-            </tr>
+            <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                <a class="page-link" href="@Url.Action("uye_yonetimi", new { page = i, search = ViewBag.SearchTerm })">@i</a>
+            </li>
         }
-    </tbody>
-</table>
+    </ul>
+</div>
+
+

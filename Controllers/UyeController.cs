@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SporSalonuYönetimSistemi.Models.Data;
 using SporSalonuYönetimSistemi.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
-using Microsoft.AspNetCore.Http;
+using System.Threading.Tasks;
+
 namespace Fitrack.Controllers
 {
     public class UyeController : Controller
@@ -15,106 +17,206 @@ namespace Fitrack.Controllers
             _context = context;
         }
 
-        public IActionResult uye_yonetimi(Member model)
+        // GET: /Uye/uye_yonetimi
+        // GET: /Uye/uye_yonetimi
+        public IActionResult uye_yonetimi(int? id, string search = "", int page = 1, int pageSize = 10)
         {
-            return View(model);
-        }
+            var query = _context.Members.AsQueryable();
 
-        public IActionResult UyeListesi()
-        {
-            var uyeler = _context.Members.ToList();
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(u => u.AdSoyad.Contains(search) || u.Eposta.Contains(search));
+            }
+
+            var uyeler = query
+                .OrderBy(u => u.AdSoyad)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            // Üyelik süresi hesaplama
+            foreach (var uye in uyeler)
+            {
+                if (uye.AbonelikBaslangicTarihi != null && uye.AbonelikBitisTarihi != null)
+                {
+                    var baslangicTarihi = uye.AbonelikBaslangicTarihi.Value;
+                    var bitisTarihi = uye.AbonelikBitisTarihi.Value;
+                    var gunFarki = (bitisTarihi - baslangicTarihi).Days;
+                    uye.UyelikSuresi = (int)(gunFarki / 30);  // 1 ay ortalama 30 gündür
+                }
+                else
+                {
+                    uye.UyelikSuresi = 0;
+                }
+            }
+
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = Math.Ceiling((double)query.Count() / pageSize);
+            ViewBag.SearchTerm = search;
+
+            // Eğer id parametresi varsa, detay ya da düzenleme formu gösterilecektir
+            if (id.HasValue)
+            {
+                var uyeToEdit = _context.Members.Find(id);
+                if (uyeToEdit != null)
+                {
+                    ViewBag.SelectedUye = uyeToEdit;
+                }
+            }
+
             return View(uyeler);
         }
 
-        // GET: /Process/UyeDetay/5
-        public IActionResult UyeDetay_action(int? id)
-        {
-            if (id == null)
-                return NotFound();
 
-            var uye = _context.Members.FirstOrDefault(u => u.Id == id);
-            if (uye == null)
-                return NotFound();
-
-            return View(uye);
-        }
-
-        // GET: /Process/UyeEkle
-        public IActionResult UyeEkle()
-        {
-            return View();
-        }
-
-        // POST: /Process/UyeEkle
+        // POST: /Uye/uye_yonetimi
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UyeEkle_action(Member uye)
+        public async Task<IActionResult> uye_yonetimi(Member uye)
         {
             if (ModelState.IsValid)
             {
+                // E-posta adresi zaten mevcut mu?
+                var existingMember = await _context.Members
+                    .FirstOrDefaultAsync(m => m.Eposta == uye.Eposta);
+
+                if (existingMember != null)
+                {
+                    TempData["ErrorMessage"] = "Bu e-posta adresiyle zaten bir üye kayıtlı.";
+                    return RedirectToAction(nameof(uye_yonetimi));
+                }
+
+                // Üye ekleme işlemi
                 _context.Add(uye);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(UyeListesi));
+                TempData["Message"] = "Üye başarıyla eklendi!";
+                return RedirectToAction(nameof(uye_yonetimi));
             }
-            return View(uye);
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var uyeToUpdate = await _context.Members.FindAsync(uye.Id);
+
+                    if (uyeToUpdate == null)
+                    {
+                        TempData["ErrorMessage"] = "Üye bulunamadı.";
+                        return RedirectToAction(nameof(uye_yonetimi));
+                    }
+
+                    // Güncellenmesi gereken alanlar
+                    uyeToUpdate.AdSoyad = uye.AdSoyad;
+                    uyeToUpdate.Eposta = uye.Eposta;
+                    uyeToUpdate.Telefon = uye.Telefon;
+                    uyeToUpdate.UyelikTuru = uye.UyelikTuru;
+                    uyeToUpdate.AylikUcret = uye.AylikUcret;
+                    uyeToUpdate.AbonelikBaslangicTarihi = uye.AbonelikBaslangicTarihi;
+                    uyeToUpdate.AbonelikBitisTarihi = uye.AbonelikBitisTarihi;
+
+                    _context.Update(uyeToUpdate);
+                    await _context.SaveChangesAsync();
+
+                    TempData["Message"] = "Üye başarıyla güncellendi!";
+                }
+                catch (Exception ex)
+                {
+                    TempData["ErrorMessage"] = $"Üye güncellenirken bir hata oluştu: {ex.Message}";
+                }
+                return RedirectToAction(nameof(uye_yonetimi));
+            }
+            var uyeToDelete = await _context.Members.FindAsync(uye.Id);
+            if (uyeToDelete != null)
+            {
+                _context.Members.Remove(uyeToDelete);
+                await _context.SaveChangesAsync();
+                TempData["Message"] = "Üye başarıyla silindi!";
+            }
+
+            //TempData["ErrorMessage"] = "Üye eklenirken bir hata oluştu.";
+            return RedirectToAction(nameof(uye_yonetimi));
+
+
+            
+
         }
 
-        // GET: /Process/UyeDuzenle/5
-        public IActionResult UyeDuzenle(int? id)
+        // GET: /Uye/UyeDetay/5
+        public async Task<IActionResult> UyeDetay_action(int? id)
         {
             if (id == null)
-                return NotFound();
+                return RedirectToAction("uye_yonetimi");
 
-            var uye = _context.Members.Find(id);
+            var uye = await _context.Members.FindAsync(id);
             if (uye == null)
-                return NotFound();
+                return RedirectToAction("uye_yonetimi");
 
             return View(uye);
         }
 
-        // POST: /Process/UyeDuzenle/5
+        // GET: /Uye/UyeDuzenle/5
+        public async Task<IActionResult> UyeDuzenle(int? id)
+        {
+            if (id == null)
+                return RedirectToAction("uye_yonetimi");
+
+            var uye = await _context.Members.FindAsync(id);
+            if (uye == null)
+                return RedirectToAction("uye_yonetimi");
+
+            return View(uye);
+        }
+
+        // POST: /Uye/UyeDuzenle
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UyeDuzenle_action(int id, Member uye)
         {
             if (id != uye.Id)
-                return NotFound();
+                return RedirectToAction("uye_yonetimi");
 
             if (ModelState.IsValid)
             {
-                _context.Update(uye);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(UyeListesi));
+                try
+                {
+                    _context.Update(uye);
+                    await _context.SaveChangesAsync();
+                    TempData["Message"] = "Üye başarıyla güncellendi!";
+                }
+                catch (Exception)
+                {
+                    TempData["ErrorMessage"] = "Üye güncellenirken bir hata oluştu.";
+                }
+                return RedirectToAction(nameof(uye_yonetimi));
             }
             return View(uye);
         }
 
-        // GET: /Process/UyeSil/5
-        public IActionResult UyeSil(int? id)
+        // GET: /Uye/UyeSil/5
+        public async Task<IActionResult> UyeSil(int? id)
         {
             if (id == null)
-                return NotFound();
+                return RedirectToAction("uye_yonetimi");
 
-            var uye = _context.Members.FirstOrDefault(u => u.Id == id);
+            var uye = await _context.Members.FindAsync(id);
             if (uye == null)
-                return NotFound();
+                return RedirectToAction("uye_yonetimi");
 
             return View(uye);
         }
 
-        // POST: /Process/UyeSil/5
+        // POST: /Uye/UyeSil/5
         [HttpPost, ActionName("UyeSil")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UyeSilOnay(int id)
         {
-            var uye = _context.Members.Find(id);
+            var uye = await _context.Members.FindAsync(id);
             if (uye != null)
             {
                 _context.Members.Remove(uye);
                 await _context.SaveChangesAsync();
+                TempData["Message"] = "Üye başarıyla silindi!";
             }
-            return RedirectToAction(nameof(UyeListesi));
+            return RedirectToAction(nameof(uye_yonetimi));
         }
     }
 }
-
