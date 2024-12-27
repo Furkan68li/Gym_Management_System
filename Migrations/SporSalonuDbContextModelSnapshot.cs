@@ -115,8 +115,6 @@ namespace SporSalonuYönetimSistemi.Migrations
 
                     b.HasKey("DersId");
 
-                    b.HasIndex("EgitmenId");
-
                     b.ToTable("Dersler");
                 });
 
@@ -165,8 +163,8 @@ namespace SporSalonuYönetimSistemi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("Miktar")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("Miktar")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("Tarih")
                         .HasColumnType("datetime2");
@@ -225,17 +223,6 @@ namespace SporSalonuYönetimSistemi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Members");
-                });
-
-            modelBuilder.Entity("SporSalonuYönetimSistemi.Models.Ders", b =>
-                {
-                    b.HasOne("SporSalonuYönetimSistemi.Models.Egitmen", "Egitmen")
-                        .WithMany()
-                        .HasForeignKey("EgitmenId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Egitmen");
                 });
 #pragma warning restore 612, 618
         }

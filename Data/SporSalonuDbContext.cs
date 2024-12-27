@@ -17,6 +17,7 @@ namespace SporSalonuYönetimSistemi.Models.Data
         public DbSet<Alet> Aletler { get; set; }
         public DbSet<Ders> Dersler { get; set; }    
         public DbSet<GelirGider> GelirGider { get; set; }
+   
      
 
 

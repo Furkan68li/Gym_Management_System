@@ -1,0 +1,267 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alet Yönetimi</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #343a40;
+            margin-bottom: 20px;
+        }
+
+        form {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            max-width: 600px;
+            margin: auto;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+            color: #495057;
+            font-size: 14px;
+        }
+
+        input[type="text"], input[type="number"], input[type="date"], select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            font-size: 14px;
+        }
+
+        input:focus, select:focus {
+            border-color: #80bdff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+            outline: none;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            font-size: 14px;
+            width: 100%;
+        }
+
+            button:hover {
+                background-color: #0056b3;
+                transform: scale(1.02);
+            }
+
+            button:active {
+                transform: scale(1);
+            }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #dee2e6;
+            font-size: 14px;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+            .action-buttons button {
+                padding: 8px 12px;
+                font-size: 12px;
+                border-radius: 6px;
+            }
+
+                .action-buttons button.delete {
+                    background-color: #dc3545;
+                }
+
+        .hidden-form {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .notification {
+            margin: 20px auto;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+            text-align: center;
+            max-width: 600px;
+        }
+
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Alet Yönetimi</h1>
+
+    <div class="notification success" id="successMessage">İşlem başarılı!</div>
+    <div class="notification error" id="errorMessage">Bir hata oluştu!</div>
+
+    <form asp-action="Ekle" method="post" id="addForm">
+        <h3 style="text-align: center; margin-bottom: 20px; color: #343a40;">Yeni Alet Ekle</h3>
+        <label for="AletAdi">Alet Adı:</label>
+        <input type="text" name="AletAdi" required />
+        
+        <label for="AletTuru">Alet Türü:</label>
+        <select name="AletTuru" required>
+            <option value="">Seçiniz...</option>
+            <option value="Kardiyo Makinaları">Kardiyo Makinaları</option>
+            <option value="Ağırsikletler">Ağırsikletler</option>
+            <option value="Dumbell ve Serbest Aletler">Dumbell ve Serbest Aletler</option>
+            <option value="Yoga ve Pilates Ekipmanları">Yoga ve Pilates Ekipmanları</option>
+            <option value="Esneklik Aletleri">Esneklik Aletleri</option>
+        </select>
+        
+        <label for="Durum">Durum:</label>
+        <select name="Durum" required>
+            <option value="">Seçiniz...</option>
+            <option value="Kullanımda">Kullanımda</option>
+            <option value="Bakımda">Bakımda</option>
+            <option value="Kullanım Dışı">Kullanım Dışı</option>
+        </select>
+        
+        <label for="Miktar">Miktar:</label>
+        <input type="number" name="Miktar" required />
+        
+        <label for="Aciklama">Açıklama:</label>
+        <input type="text" name="Aciklama" />
+        
+        <label for="AlimTarihi">Alım Tarihi:</label>
+        <input type="date" name="AlimTarihi" required />
+        
+        <button type="submit">Ekle</button>
+    </form>
+
+    <h3 style="text-align: center; margin-top: 40px; color: #343a40;">Alet Listesi</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Alet ID</th>
+                <th>Alet Adı</th>
+                <th>Alet Türü</th>
+                <th>Durum</th>
+                <th>Miktar</th>
+                <th>Açıklama</th>
+                <th>Alım Tarihi</th>
+                <th>İşlemler</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var alet in Model)
+            {
+                <tr>
+                    <td>@alet.AletId</td>
+                    <td>@alet.AletAdi</td>
+                    <td>@alet.AletTuru</td>
+                    <td>@alet.Durum</td>
+                    <td>@alet.Miktar</td>
+                    <td>@alet.Aciklama</td>
+                    <td>@alet.AlimTarihi.ToShortDateString()</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button onclick="toggleUpdateForm('@alet.AletId')">Güncelle</button>
+                            <form asp-action="Sil" method="post" style="display:inline;">
+                                <input type="hidden" name="id" value="@alet.AletId" />
+                                <button type="submit" class="delete">Sil</button>
+                            </form>
+                        </div>
+                        <div class="hidden-form" id="updateForm-@alet.AletId">
+                            <form asp-action="Guncelle" method="post">
+                                <input type="hidden" name="AletId" value="@alet.AletId" />
+                                <label for="AletAdi">Alet Adı:</label>
+                                <input type="text" name="AletAdi" value="@alet.AletAdi" required />
+                                
+                                <label for="AletTuru">Alet Türü:</label>
+                                <select name="AletTuru" required>
+                                    <option value="Kardiyo Makinaları"> Kardiyo Makinaları</option>
+                                    <option value="Ağırsikletler" >Ağırsikletler</option>
+                                    <option value="Dumbell ve Serbest Aletler" >Dumbell ve Serbest Aletler</option>
+                                    <option value="Yoga ve Pilates Ekipmanları">Yoga ve Pilates Ekipmanları</option>
+                                    <option value="Esneklik Aletleri">Esneklik Aletleri</option>
+                                </select>
+                                
+                                <label for="Durum">Durum:</label>
+                                <select name="Durum" required>
+                                    <option value="Kullanımda">Kullanımda</option>
+                                    <option value="Bakımda">Bakımda</option>
+                                    <option value="Kullanım Dışı">Kullanım Dışı</option>
+                                </select>
+                                
+                                <label for="Miktar">Miktar:</label>
+                                <input type="number" name="Miktar" value="@alet.Miktar" required />
+                                
+                                <label for="Aciklama">Açıklama:</label>
+                                <input type="text" name="Aciklama" value="@alet.Aciklama" />
+                                
+                                <label for="AlimTarihi">Alım Tarihi:</label>
+                                <input type="date" name="AlimTarihi" value="@alet.AlimTarihi.ToString("yyyy-MM-dd")" required />
+                                
+                                <button type="submit">Kaydet</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <script>
+        function toggleUpdateForm(id) {
+            const form = document.getElementById(`updateForm-${id}`);
+            form.style.display = form.style.display === "block" ? "none" : "block";
+        }
+    </script>
+</body>
+</html>

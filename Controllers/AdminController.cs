@@ -97,7 +97,7 @@ public class AdminController : Controller
     }
 
     // Anasayfa'ya yönlendirme işlemi
-    public IActionResult Anasayfa()
+    public IActionResult  Anasayfa()
     {
         // Oturum açmış kullanıcıyı kontrol et
         var adminUserName = HttpContext.Session.GetString("AdminUserName");

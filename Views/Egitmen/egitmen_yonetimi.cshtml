@@ -1,0 +1,91 @@
+﻿@model IEnumerable<SporSalonuYönetimSistemi.Models.Egitmen>
+
+<div class="container py-5">
+    <h2 class="mb-4 text-center">Eğitmen Yönetimi</h2>
+
+    <!-- Eğitmen arama formu -->
+    <form method="get" asp-action="Ara" class="mb-4">
+        <div class="input-group shadow-sm">
+            <input type="text" id="arama" name="arama" class="form-control" placeholder="Eğitmen adı, soyadı veya uzmanlık alanı ile ara" value="@ViewBag.Arama" />
+            <button type="submit" class="btn btn-primary">Ara</button>
+        </div>
+    </form>
+
+    <!-- Eğitmenler Tablosu -->
+    @if (Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped align-middle shadow-sm">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Adı</th>
+                        <th>Soyadı</th>
+                        <th>Uzmanlık Alanı</th>
+                        <th>Deneyim (Yıl)</th>
+                        <th>İletişim</th>
+                        <th class="text-center">İşlem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var egitmen in Model)
+                    {
+                        <tr>
+                            <td>@egitmen.Adi</td>
+                            <td>@egitmen.Soyadi</td>
+                            <td>@egitmen.UzmanlikAlani</td>
+                            <td>@egitmen.Deneyim</td>
+                            <td>@egitmen.Iletisim</td>
+                            <td class="d-flex justify-content-center">
+                                <!-- Düzenle butonu -->
+                                <a href="@Url.Action("Egitmen_yonetimi", "Egitmen", new { id = egitmen.EgitmenId })" class="btn btn-warning btn-sm me-2">Düzenle</a>
+                                <!-- Sil butonu -->
+                                <form method="post" asp-action="Sil" asp-route-id="@egitmen.EgitmenId" class="d-inline">
+                                    <button type="submit" class="btn btn-danger btn-sm">Sil</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <p class="alert alert-info text-center">Hiç eğitmen bulunamadı.</p>
+    }
+
+    <!-- Eğitmen ekleme formu -->
+    <h3 class="mt-5 text-center">Eğitmen Ekle</h3>
+    <form method="post" asp-action="Egitmen_yonetimi" class="p-4 border rounded shadow-sm">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="Adi" class="form-label">Adı</label>
+                <input type="text" id="Adi" name="Adi" class="form-control" placeholder="Eğitmen adı" required />
+            </div>
+            <div class="col-md-6">
+                <label for="Soyadi" class="form-label">Soyadı</label>
+                <input type="text" id="Soyadi" name="Soyadi" class="form-control" placeholder="Eğitmen soyadı" required />
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="UzmanlikAlani" class="form-label">Uzmanlık Alanı</label>
+            <input type="text" id="UzmanlikAlani" name="UzmanlikAlani" class="form-control" placeholder="Uzmanlık alanı" required />
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="Deneyim" class="form-label">Deneyim (Yıl)</label>
+                <input type="number" id="Deneyim" name="Deneyim" class="form-control" placeholder="Deneyim (Yıl)" required />
+            </div>
+            <div class="col-md-6">
+                <label for="Iletisim" class="form-label">İletişim</label>
+                <input type="text" id="Iletisim" name="Iletisim" class="form-control" placeholder="İletişim bilgisi" required />
+            </div>
+        </div>
+
+        <div class="text-center">
+            <button type="submit" class="btn btn-success">Eğitmen Ekle</button>
+        </div>
+    </form>
+</div>

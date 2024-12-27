@@ -7,7 +7,6 @@ public class Ders
     public DateTime BaslangicSaati { get; set; } // Dersin başlangıç saati
     public DateTime BitisSaati { get; set; } // Dersin bitiş saati
     public int EgitmenId { get; set; } // Eğitmenin ID'si
-    public Egitmen Egitmen { get; set; } // Eğitmen bilgisi (başka bir modelle ilişki kuruldu)
     public string DersYeri { get; set; } // Dersin yapılacağı yer (örneğin, spor salonu)
     public bool Aktif { get; set; } // Dersin aktif olup olmadığı
 }

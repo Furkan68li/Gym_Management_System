@@ -216,11 +216,9 @@
         </button>
         <ul class="dropdown-menu" id="dropdownMenu">
             <li><a class="dropdown-item" href="@Url.Action("uye_yonetimi", "Uye")">Üye Yönetimi</a></li>
-            <li><a class="dropdown-item" href="/Ders/Islemler">Ders İşlemleri</a></li>
-            <li><a class="dropdown-item" href="/Egitmen/Yonetim">Eğitmen Yönetimi</a></li>
-            <li><a class="dropdown-item" href="/Alet/Yonetim">Alet Yönetimi</a></li>
-            <li><a class="dropdown-item" href="/GelirGider/Yonetim">Gelir-Gider Yönetimi</a></li>
-            <li><a class="dropdown-item" href="/Raporlama/Goruntule">Raporlama</a></li>
+            <li><a class="dropdown-item" href="@Url.Action("Ders_islemleri", "Ders")">Ders İşlemleri</a></li>
+            <li><a class="dropdown-item" href="@Url.Action("Egitmen_yonetimi", "Egitmen")">Eğitmen Yönetimi</a></li>
+            <li><a class="dropdown-item" href="@Url.Action("Alet_yonetimi", "Alet")">Alet Yönetimi</a></li>
             <li><a class="dropdown-item text-danger" href="/Admin/Logout">Çıkış Yap</a></li>
         </ul>
     </div>

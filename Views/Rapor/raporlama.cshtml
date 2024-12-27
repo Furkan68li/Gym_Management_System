@@ -1,0 +1,110 @@
+﻿@{
+    ViewData["Title"] = "Raporlama Sayfası";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<!-- Üyeler Bölümü -->
+<h3>Üyeler</h3>
+<p>Toplam Üye Sayısı: @Model.ToplamUyeSayisi</p>
+<p>Aktif Üye Sayısı: @Model.AktifUyeSayisi</p>
+<p>Pasif Üye Sayısı: @Model.PasifUyeSayisi</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Üye Adı</th>
+            <th>E-posta</th>
+            <th>Üyelik Süresi (Ay)</th>
+            <th>Abonelik Durumu</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var uye in Model.Uyeler)
+        {
+            <tr>
+                <td>@uye.AdSoyad</td>
+                <td>@uye.Eposta</td>
+                <td>@uye.UyelikSuresi</td>
+                <td>@(uye.AktifMi ? "Aktif" : "Pasif")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Dersler Bölümü -->
+<h3>Dersler</h3>
+<p>Toplam Ders Sayısı: @Model.ToplamDersSayisi</p>
+<p>Aktif Ders Sayısı: @Model.AktifDersSayisi</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Ders Adı</th>
+            <th>Başlangıç Zamanı</th>
+            <th>Durum</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var ders in Model.Dersler)
+        {
+            <tr>
+                <td>@ders.DersAdi</td>
+                <td>@ders.BaslangicZamani.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@(ders.Aktif ? "Aktif" : "Pasif")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Eğitmenler Bölümü -->
+<h3>Eğitmenler</h3>
+<p>Toplam Eğitmen Sayısı: @Model.ToplamEgitmenSayisi</p>
+<p>Aktif Eğitmen Sayısı: @Model.AktifEgitmenSayisi</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Eğitmen Adı</th>
+            <th>Uzmanlık Alanı</th>
+            <th>Deneyim Yılı</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var egitmen in Model.Egitmenler)
+        {
+            <tr>
+                <td>@egitmen.Adi @egitmen.Soyadi</td>
+                <td>@egitmen.UzmanlikAlani</td>
+                <td>@egitmen.Deneyim</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Aletler Bölümü -->
+<h3>Aletler</h3>
+<p>Toplam Alet Sayısı: @Model.ToplamAletSayisi</p>
+<p>Aktif Alet Sayısı: @Model.AktifAletSayisi</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Alet Adı</th>
+            <th>Alet Türü</th>
+            <th>Durum</th>
+            <th>Miktar</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var alet in Model.Aletler)
+        {
+            <tr>
+                <td>@alet.AletAdi</td>
+                <td>@alet.AletTuru</td>
+                <td>@(alet.Durum ? "Aktif" : "Pasif")</td>
+                <td>@alet.Miktar</td>
+            </tr>
+        }
+    </tbody>
+</table>

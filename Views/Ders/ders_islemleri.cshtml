@@ -1,0 +1,131 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ders İşlemleri</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Ders İşlemleri</h1>
+
+        <!-- Mesajlar -->
+        @if (TempData["Message"] != null)
+        {
+            <div class="alert alert-success">@TempData["Message"]</div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+        }
+
+        <!-- Ders Ekleme Formu -->
+        <div class="card my-4">
+            <div class="card-header">Ders Ekle</div>
+            <div class="card-body">
+                <form method="post" action="Ekle">
+                    <input type="hidden" id="DersId" name="DersId" value="@ViewBag.SelectedDers?.DersId">
+                    <div class="mb-3">
+                        <label for="DersAdi" class="form-label">Ders Adı</label>
+                        <input type="text" class="form-control" id="DersAdi" name="DersAdi" value="@ViewBag.SelectedDers?.DersAdi" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Aciklama" class="form-label">Açıklama</label>
+                        <textarea class="form-control" id="Aciklama" name="Aciklama" rows="3">@ViewBag.SelectedDers?.Aciklama</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="BaslangicSaati" class="form-label">Başlangıç Saati</label>
+                        <input type="datetime-local" class="form-control" id="BaslangicSaati" name="BaslangicSaati" value="@ViewBag.SelectedDers?.BaslangicSaati.ToString("yyyy-MM-ddTHH:mm")" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="BitisSaati" class="form-label">Bitiş Saati</label>
+                        <input type="datetime-local" class="form-control" id="BitisSaati" name="BitisSaati" value="@ViewBag.SelectedDers?.BitisSaati.ToString("yyyy-MM-ddTHH:mm")" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Egitmen" class="form-label">Eğitmen</label>
+                        <select class="form-select" id="Egitmen" name="Egitmen" required>
+                            <option value="">Eğitmen Seçin</option>
+                            <option value="Ayşe Yılmaz">Ayşe Yılmaz</option>
+                            <option value="Göktuğ Alaf">Göktuğ Alaf</option>
+                            <option value="Elif Demir">Elif Demir</option>
+                            <option value="Taylan Özgüç Danyıldız">Taylan Özgüç Danyıldız</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="DersYeri" class="form-label">Ders Yeri</label>
+                        <select class="form-select" id="DersYeri" name="DersYeri" required>
+                            <option value="">Ders Yeri Seçin</option>
+                            <option value="Salon1">Salon 1</option>
+                            <option value="Salon2">Salon 2</option>
+                            <option value="Salon3">Salon 3</option>
+                            <option value="Salon4">Salon 4</option>
+                            <option value="Salon5">Salon 5</option>
+                            
+                        </select>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="Aktif" name="Aktif" @(ViewBag.SelectedDers?.Aktif == true ? "checked" : "")>
+                        <label class="form-check-label" for="Aktif">Aktif</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-3">
+                        @(ViewBag.SelectedDers == null ? "Dersi Ekle" : "Ders Güncelle")
+                    </button>
+
+                </form>
+            </div>
+        </div>
+
+        <!-- Ders Listesi -->
+        <div class="card">
+            <div class="card-header">Ders Listesi</div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Ders Adı</th>
+                            <th>Açıklama</th>
+                            <th>Başlangıç</th>
+                            <th>Bitiş</th>
+                            <th>Eğitmen</th>
+                            <th>Ders Yeri</th>
+                            <th>Aktif</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var ders in Model)
+                        {
+                            <tr>
+                                <td>@ders.DersId</td>
+                                <td>@ders.DersAdi</td>
+                                <td>@ders.Aciklama</td>
+                                <td>@ders.BaslangicSaati.ToString("yyyy-MM-dd HH:mm")</td>
+                                <td>@ders.BitisSaati.ToString("yyyy-MM-dd HH:mm")</td>
+                                <td>@ders.Egitmen</td>
+                                <td>@ders.DersYeri</td>
+                                <td>@(ders.Aktif ? "Evet" : "Hayır")</td>
+                                <td>
+                                    <!-- Düzenle -->
+                                    <form method="get" action="/Ders_islemleri" style="display:inline;">
+                                        <input type="hidden" name="id" value="@ders.DersId" />
+                                        <button type="submit" class="btn btn-sm btn-warning">Düzenle</button>
+                                    </form>
+                                    <!-- Sil -->
+                                    <form method="post" action="/Ders/Sil" style="display:inline;">
+                                        <input type="hidden" name="id" value="@ders.DersId" />
+                                        <button type="submit" class="btn btn-sm btn-danger">Sil</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
